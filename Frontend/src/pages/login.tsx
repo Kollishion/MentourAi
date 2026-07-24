@@ -3,6 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 
 import { loginSchema, type LoginInput } from "../lib/validation/auth.schema";
+import { API } from "../lib/api";
+import FormError from "../components/forms/FormError";
 
 export default function Login() {
   const {
@@ -15,7 +17,7 @@ export default function Login() {
 
   async function onSubmit(data: LoginInput) {
    try{
- 	const response = await axios.post("/auth/login", data);
+ 	const response = await axios.post(API.AUTH.LOGIN, data, {withCredentials: true});
 	console.log(response.data);
    }catch(e){
  	console.error(e);
@@ -25,18 +27,19 @@ export default function Login() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <input
+      <input 
+        id="email"
         placeholder="Email"
         {...register("email")}
       />
-      <p>{errors.email?.message}</p>
+      <FormError error={errors.email}/>
 
       <input
         type="password"
         placeholder="Password"
         {...register("password")}
       />
-      <p>{errors.password?.message}</p>
+      <FormError error={errors.password}/>
 
       <button disabled={isSubmitting}>
         Login

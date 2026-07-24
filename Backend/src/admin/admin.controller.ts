@@ -14,7 +14,7 @@ export const changeUserRole = async (req: Request, res: Response, next: NextFunc
   try {
     const { userId } = req.params;
     const { role } = req.body;
-    const user = await updateUserRole(userId, role);
+    const user = await updateUserRole(userId as string, role);
     res.status(200).json({ success: true, data: user });
   } catch (error) {
     next(error);
@@ -25,7 +25,7 @@ export const changeUserStatus = async (req: Request, res: Response, next: NextFu
   try {
     const { userId } = req.params;
     const { status } = req.body; 
-    const user = await updateUserStatus(userId, status);
+    const user = await updateUserStatus(userId as string, status);
     res.status(200).json({ success: true, data: user });
   } catch (error) {
     next(error);

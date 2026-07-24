@@ -1,0 +1,21 @@
+# Node / Bun
+node_modules/
+bun.lockb
+dist/
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.venv*/
+venv/
+ENV/
+
+# System & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

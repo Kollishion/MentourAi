@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../store/AuthContext";
 import {
   getNextAction,
@@ -10,8 +11,9 @@ import {
 type Stage = "pick-concept" | "loading" | "needs-answer" | "result" | "transfer";
 
 export default function Learn() {
+  const [searchParams] = useSearchParams();
   const user = useAuthStore((s) => s.user);
-  const [targetConcept, setTargetConcept] = useState("");
+  const [targetConcept, setTargetConcept] = useState(searchParams.get("concept") ?? "");
   const [stage, setStage] = useState<Stage>("pick-concept");
   const [decision, setDecision] = useState<NextActionDecision | null>(null);
   const [question, setQuestion] = useState("");
@@ -19,6 +21,15 @@ export default function Learn() {
   const [confidence, setConfidence] = useState(50);
   const [result, setResult] = useState<DiagnoseResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fromUrl = searchParams.get("concept");
+    if (fromUrl && user) {
+      setTargetConcept(fromUrl);
+      runNextAction(fromUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   async function startLearning(e: React.FormEvent) {
     e.preventDefault();
@@ -36,7 +47,6 @@ export default function Learn() {
       if (res.decision.action === "transfer_problem") {
         setStage("transfer");
       } else {
-        // both "remediate_prerequisite" and "run_diagnostic" need a question
         setQuestion("");
         setAnswer("");
         setResult(null);

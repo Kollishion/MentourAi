@@ -142,7 +142,7 @@ const FullScreenNav = () => {
           <div>
             <div className="lg:w-36 w-24 lg:h-25 h-auto flex items-center">
         	<div className='lg:w-28 w-15 text-3xl h-auto purple-fade-text font-bold'>	
-			Bhavam
+			MentourAi
                 </div>
             </div>
           </div>

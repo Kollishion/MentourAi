@@ -10,7 +10,7 @@ const Navbar = () => {
         <div className='z-4 flex fixed top-0 w-full items-start justify-between'>
             <div className='pt-3.5 lg:pl-10'>
                 <div className='lg:w-28 w-15 text-3xl h-auto purple-fade-text'>	
-			Bhavam
+			MentourAi
                 </div>
             </div>
             <div onClick={()=>{

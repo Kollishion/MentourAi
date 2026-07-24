@@ -1,4 +1,5 @@
 from typing import Optional
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -6,7 +7,12 @@ from pydantic import BaseModel
 from schemas.state import StudentState
 from schemas.content import MaterialInput, MaterialType
 from agents.content_agent import content_agent
-from agents.orchestrator import load_content_map, next_best_action, run_diagnostic_and_teach
+from agents.orchestrator import (
+    load_content_map,
+    next_best_action,
+    run_diagnostic_and_teach,
+)
+from core.gemma_client import call_gemma
 
 
 app = FastAPI(
@@ -22,7 +28,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 student_states: dict[str, StudentState] = {}
 
@@ -56,42 +61,81 @@ class DiagnosticRequest(BaseModel):
 class MentorPromptRequest(BaseModel):
     prompt: Optional[str] = None
     student_id: str = "default_student"
+
     concept: Optional[str] = None
     question: Optional[str] = None
     student_answer: Optional[str] = None
     confidence: float = 50.0
+
 
 @app.get("/")
 def root():
     return {
         "status": "online",
         "system": "Mentor OS Agentic Learning API",
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
+
 
 @app.post("/mentor")
 def mentor_endpoint(request: MentorPromptRequest):
     state = get_student_state(request.student_id)
 
-    concept = request.concept or "General Concept"
-    question = request.question or request.prompt or "Explain concept"
-    student_answer = request.student_answer or request.prompt or ""
+    # -------------------------------------------------
+    # DIAGNOSTIC MODE
+    # -------------------------------------------------
+    if (
+        request.concept
+        and request.question
+        and request.student_answer
+    ):
+        diagnosis, tutoring = run_diagnostic_and_teach(
+            state,
+            concept=request.concept,
+            question=request.question,
+            student_answer=request.student_answer,
+            confidence=request.confidence,
+        )
 
-    diagnosis, tutoring = run_diagnostic_and_teach(
-        state,
-        concept=concept,
-        question=question,
-        student_answer=student_answer,
-        confidence=request.confidence,
-    )
+        response_text = (
+            tutoring.explanation
+            if tutoring
+            else "Mastery looks solid - no remediation needed right now."
+        )
 
-    response_text = tutoring.explanation if tutoring else "Mastery looks solid - no remediation needed right now."
+        return {
+            "mode": "diagnostic",
+            "response": response_text,
+            "diagnosis": diagnosis.model_dump(),
+            "tutoring": tutoring.model_dump() if tutoring else None,
+            "next_action": next_best_action(state, request.concept),
+        }
+
+    # -------------------------------------------------
+    # NORMAL CHAT MODE
+    # -------------------------------------------------
+    prompt = f"""
+You are MentourAI.
+
+The user is asking a question.
+
+Teach the topic clearly.
+
+Do NOT evaluate them.
+
+Do NOT diagnose misconceptions.
+
+Only answer the question naturally like ChatGPT.
+
+User:
+{request.prompt}
+"""
+
+    response = call_gemma(prompt, schema=None)
 
     return {
-        "response": response_text,
-        "diagnosis": diagnosis.model_dump(),
-        "tutoring": tutoring.model_dump() if tutoring else None,
-        "next_action": next_best_action(state, concept),
+        "mode": "chat",
+        "response": response,
     }
 
 
@@ -105,7 +149,9 @@ def process_content(request: MaterialRequest):
         source_name=request.source_name,
     )
 
-    print(f"[Content Agent] Extracting concept map for student '{request.student_id}'...")
+    print(
+        f"[Content Agent] Extracting concept map for student '{request.student_id}'..."
+    )
 
     content_map = content_agent([material])
     load_content_map(state, content_map)
@@ -132,6 +178,7 @@ def get_next_action(request: LearningRequest):
         "decision": decision,
     }
 
+
 @app.post("/api/learning/diagnose")
 def diagnose_student(request: DiagnosticRequest):
     state = get_student_state(request.student_id)
@@ -153,15 +200,14 @@ def diagnose_student(request: DiagnosticRequest):
         "next_action": next_best_action(state, request.concept),
     }
 
+
 @app.get("/api/student/{student_id}")
 def inspect_student_state(student_id: str):
     state = get_student_state(student_id)
+
     return {
         "student_id": state.student_id,
         "concept_mastery": state.concept_mastery,
         "prerequisites": state.prerequisites,
         "misconception_log": state.misconception_log,
     }
-
-
-

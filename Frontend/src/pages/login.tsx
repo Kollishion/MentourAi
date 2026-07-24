@@ -5,6 +5,7 @@ import { loginSchema, type LoginInput } from "../lib/validation/auth.schema";
 import { API } from "../lib/api";
 import FormError from "../components/forms/FormError";
 import { useAuthStore } from "../store/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const {
@@ -14,13 +15,14 @@ export default function Login() {
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
-
+  const navigate = useNavigate();
   async function onSubmit(data: LoginInput) {
     try {
       const response = await axios.post(API.AUTH.LOGIN, data, { withCredentials: true });
       const { user, accessToken } = response.data.data;
       useAuthStore.getState().setUser(user);
       localStorage.setItem("accessToken", accessToken);
+      navigate("/dashboard");
     } catch (e) {
       console.error(e);
     }

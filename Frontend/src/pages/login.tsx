@@ -18,7 +18,9 @@ export default function Login() {
   async function onSubmit(data: LoginInput) {
     try {
       const response = await axios.post(API.AUTH.LOGIN, data, { withCredentials: true });
-      useAuthStore.getState().setUser(response.data.user);
+      const { user, accessToken } = response.data.data;
+      useAuthStore.getState().setUser(user);
+      localStorage.setItem("accessToken", accessToken);
     } catch (e) {
       console.error(e);
     }

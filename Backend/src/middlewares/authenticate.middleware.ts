@@ -9,7 +9,7 @@ export const authenticate = async (
 ) => {
   try {
     const authHeader = req.headers.authorization;
-
+    console.log("Authorization:", req.headers.authorization);
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
@@ -18,6 +18,7 @@ export const authenticate = async (
     }
 
     const token = authHeader.split(" ")[1];
+    console.log("Token:", token);
     if (!token) {
 	return 	res.status(401).json({
 		success: false,
@@ -55,6 +56,7 @@ export const authenticate = async (
 
     next();
   } catch (error) {
+    console.log("error");
     return res.status(401).json({
       success: false,
       message: "Invalid or expired access token.",

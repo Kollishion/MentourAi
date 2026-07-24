@@ -9,14 +9,12 @@ from agents.content_agent import content_agent
 from agents.orchestrator import load_content_map, next_best_action, run_diagnostic_and_teach
 
 
-# Initialize the FastAPI app
 app = FastAPI(
     title="Mentor OS - Agentic Learning System",
     description="AI-powered agentic learning mentor",
     version="1.0.0",
 )
 
-# Enable CORS for frontend integration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,10 +24,6 @@ app.add_middleware(
 )
 
 
-# --------------------------------------------------
-# In-memory student state store
-# --------------------------------------------------
-
 student_states: dict[str, StudentState] = {}
 
 
@@ -38,10 +32,6 @@ def get_student_state(student_id: str) -> StudentState:
         student_states[student_id] = StudentState(student_id=student_id)
     return student_states[student_id]
 
-
-# --------------------------------------------------
-# Request Schemas
-# --------------------------------------------------
 
 class MaterialRequest(BaseModel):
     student_id: str
@@ -71,11 +61,6 @@ class MentorPromptRequest(BaseModel):
     student_answer: Optional[str] = None
     confidence: float = 50.0
 
-
-# --------------------------------------------------
-# Root Endpoint
-# --------------------------------------------------
-
 @app.get("/")
 def root():
     return {
@@ -83,11 +68,6 @@ def root():
         "system": "Mentor OS Agentic Learning API",
         "version": "1.0.0"
     }
-
-
-# --------------------------------------------------
-# Direct Mentor Endpoint
-# --------------------------------------------------
 
 @app.post("/mentor")
 def mentor_endpoint(request: MentorPromptRequest):
@@ -115,10 +95,6 @@ def mentor_endpoint(request: MentorPromptRequest):
     }
 
 
-# --------------------------------------------------
-# Pipeline 1: Content Processing (Content Agent)
-# --------------------------------------------------
-
 @app.post("/api/content/process")
 def process_content(request: MaterialRequest):
     state = get_student_state(request.student_id)
@@ -142,10 +118,6 @@ def process_content(request: MaterialRequest):
     }
 
 
-# --------------------------------------------------
-# Pipeline 2: Decide Next Best Action (Orchestrator)
-# --------------------------------------------------
-
 @app.post("/api/learning/next-action")
 def get_next_action(request: LearningRequest):
     state = get_student_state(request.student_id)
@@ -159,11 +131,6 @@ def get_next_action(request: LearningRequest):
         "student_id": request.student_id,
         "decision": decision,
     }
-
-
-# --------------------------------------------------
-# Pipeline 3: Diagnostic + Tutor Intervention
-# --------------------------------------------------
 
 @app.post("/api/learning/diagnose")
 def diagnose_student(request: DiagnosticRequest):
@@ -185,11 +152,6 @@ def diagnose_student(request: DiagnosticRequest):
         "updated_mastery": state.concept_mastery,
         "next_action": next_best_action(state, request.concept),
     }
-
-
-# --------------------------------------------------
-# Student State Status Inspection
-# --------------------------------------------------
 
 @app.get("/api/student/{student_id}")
 def inspect_student_state(student_id: str):

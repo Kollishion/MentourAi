@@ -1,8 +1,8 @@
 import { Role } from "@prisma/client";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 
-const accessSecretValue = process.env.JWT_ACCESS_SECRET;
-const refreshSecretValue = process.env.JWT_REFRESH_SECRET;
+const accessSecretValue = process.env.ACCESS_TOKEN_EXPIRES_IN;
+const refreshSecretValue = process.env.REFRESH_TOKEN_EXPIRES_IN;
 
 if (!accessSecretValue || !refreshSecretValue) {
   throw new Error("JWT secrets are not configured.");
@@ -14,7 +14,8 @@ const refreshSecret = new TextEncoder().encode(refreshSecretValue);
 
 const accessExpiresIn = process.env.ACCESS_TOKEN_EXPIRES_IN;
 const refreshExpiresIn = process.env.REFRESH_TOKEN_EXPIRES_IN;
-
+console.log("ACCESS_TOKEN_SECRET =", process.env.ACCESS_TOKEN_EXPIRES_IN);
+console.log("REFRESH_TOKEN_SECRET =", process.env.REFRESH_TOKEN_EXPIRES_IN);
 if (!accessExpiresIn || !refreshExpiresIn) {
   throw new Error("JWT expiration settings are not configured.");
 }

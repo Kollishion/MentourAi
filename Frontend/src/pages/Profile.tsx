@@ -9,14 +9,20 @@ export default function Profile() {
   useEffect(() => {
     async function fetchProfile() {
       try {
+	const accessToken = localStorage.getItem("accessToken");
+
+        console.log("TOKEN =", accessToken);
+        console.log("HEADER =", `Bearer ${accessToken}`);
         const response = await axios.get(
-          API.AUTH.PROFILE,
-          {
+          API.AUTH.PROFILE,{
+	  headers: {
+		Authorization: `Bearer ${accessToken}`,  
+	  },
             withCredentials: true,
           }
         );
 
-        setUser(response.data);
+        setUser(response.data.data);
       } catch (e) {
         console.error(e);
       }

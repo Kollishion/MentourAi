@@ -1,20 +1,71 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { NavbarContext } from "../context/NavContext";
-import logo from "../assets/orBIS.png";
+import { useContext, useMemo, useRef } from "react";
+import { NavbarContext } from "../store/NavContext.tsx";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/AuthContext.tsx";
+import { API } from "../lib/api";
+import axios from "axios";
+
 const FullScreenNav = () => {
   const fullNavLinksRef = useRef(null);
   const fullScreenRef = useRef(null);
-
-  const [navOpen, setNavOpen] = useContext(NavbarContext);
-  const links = [
+  const context = useContext(NavbarContext);
+  if(!context) throw new Error("NavbarContext must be used within NavbarProvider");
+  const [navOpen, setNavOpen] = context;
+  const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
+  const links = useMemo(() => { 
+  const nav = [
     { title: "Home", path: "/" },
-    { title: "Projects", path: "/projects" },
     { title: "About", path: "/about" },
-    { title: "Blog", path: "/blog" },
-    { title: "Contact", path: "/contact" },
   ];
+
+  if (!user) {
+    nav.push(
+      { title: "Login", path: "/login" },
+      { title: "Register", path: "/register" }
+    );
+  } else {
+    nav.push(
+      { title: "Dashboard", path: "/dashboard" },
+      { title: "Profile", path: "/profile" }
+    );
+
+    if (user.role === "ADMIN") {
+      nav.push({
+        title: "Admin",
+        path: "/admin",
+      });
+    }
+
+    nav.push({
+      title: "Logout",
+      path: "/logout",
+    });
+  }
+  return nav;
+}, [user]);
+   async function handleLogout(e) {
+	   e.preventDefault();
+  try {
+    await axios.post(
+      API.AUTH.LOGOUT,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+
+    useAuthStore.getState().logout();
+
+    setNavOpen(false);
+
+    navigate("/");
+  } catch (e) {
+    console.error(e);
+  }
+}
   function gsapAnimation() {
     const tl = gsap.timeline();
     tl.to(".fullscreennav", {
@@ -89,12 +140,10 @@ const FullScreenNav = () => {
       <div ref={fullNavLinksRef} className="relative">
         <div className="navlink flex w-full justify-between lg:p-5 p-2 items-start">
           <div>
-            <div className="lg:w-36 w-24 lg:h-[100px] h-auto flex items-center">
-              <img
-                src={logo}
-                alt="orBIS"
-                className="w-28 lg:w-36 h-full object-contain"
-              />
+            <div className="lg:w-36 w-24 lg:h-25 h-auto flex items-center">
+        	<div className='lg:w-28 w-15 text-3xl h-auto purple-fade-text font-bold'>	
+			Bhavam
+                </div>
             </div>
           </div>
           <div
@@ -109,52 +158,17 @@ const FullScreenNav = () => {
         </div>
         <div className="">
           {links.map((item, idx) => (
-            <div
+            <Link
+	      to={item.path}
               key={idx}
-              className="link group relative overflow-hidden border-t border-white cursor-pointer"
+	      onClick={item.title === "Logout" ? handleLogout : undefined}
+              className="link group relative block w-full overflow-hidden border-t border-white cursor-pointer"
             >
-              <h1
-                className="
-                relative z-10
-                text-2xl
-                lg:text-[3vw]
-                text-center
-                uppercase
-                py-2 lg:py-3
-                transition-all
-                duration-500
-                group-hover:text-black
-                "
-              >
+              <h1 className="relative z-10 text-2xl lg:text-[3vw] text-center uppercase py-2 lg:py-3 transition-all duration-500 group-hover:text-black">
                 {item.title}
               </h1>
-              <div
-                className="
-                absolute
-                left-0
-                top-full
-                h-full
-                w-full
-                bg-primary
-                transition-all
-                duration-500
-                group-hover:top-0
-                "
-              />
-              <div
-                className="
-                absolute
-                top-1/2
-                -translate-y-1/2
-                left-0
-                w-full
-                overflow-hidden
-                opacity-0
-                group-hover:opacity-100
-                transition-all
-                duration-300
-                "
-              >
+              <div className="absolute inset-0 bg-primary -translate-y-full h-full w-full transition-transform duration-500 group-hover:translate-y-0"/>
+              <div className="absolute top-1/2 -translate-y-1/2 left-0 w-full overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-300">
                 <div className="flex whitespace-nowrap animate-marquee">
                   <span className="mx-10 text-black text-3xl lg:text-6xl">
                     Explore {item.title}
@@ -167,8 +181,8 @@ const FullScreenNav = () => {
                   </span>
                 </div>
               </div>
-            </div>
-          ))}
+            </Link>
+	  ))}
         </div>
       </div>
     </div>

@@ -24,19 +24,18 @@ const Home = () => {
           <div className="z-20 text-center">
 
             <span className="uppercase tracking-[0.7em] text-sm text-text-muted">
-              Build
+              Learn
             </span>
 
             <h1 className="mt-4 text-6xl font-black uppercase leading-none md:text-8xl lg:text-[8rem]">
-              THE{" "}
+              From{" "}
               <span className="text-primary">
-                FUTURE
+                Best
               </span>
             </h1>
 
             <p className="mx-auto mt-8 max-w-2xl text-base leading-8 text-text-muted lg:text-lg">
-              Crafting scalable digital products with thoughtful design,
-              powerful engineering and modern AI technologies.
+              Learn faster, solve smarter, and grow with an AI mentor that adapts to your learning journey.
             </p>
 
             <div className="mt-10 flex justify-center gap-5">

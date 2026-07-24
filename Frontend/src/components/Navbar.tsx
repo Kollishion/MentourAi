@@ -1,17 +1,16 @@
 import { useContext, useRef } from 'react';
-import { NavbarColorContext, NavbarContext } from '../context/NavContext';
-import logo from "../assets/orBIS.png";
+import { NavbarColorContext, NavbarContext } from '../store/NavContext.tsx';
 const Navbar = () => {
 
     const navGreenRef = useRef<HTMLDivElement | null>(null)
-    const [navOpen,setNavOpen] = useContext(NavbarContext)
-    const [navColor, setNavColor] = useContext(NavbarColorContext)
+    const [navOpen,setNavOpen] = useContext(NavbarContext);
+    const [navColor, setNavColor] = useContext(NavbarColorContext);
 
     return (
         <div className='z-4 flex fixed top-0 w-full items-start justify-between'>
             <div className='pt-3.5 lg:pl-10'>
-                <div className='lg:w-28 w-15 h-auto'>
-			<img src={logo} alt='Logo' className='w-28 lg:w-36 h-auto object-contain' />
+                <div className='lg:w-28 w-15 text-3xl h-auto purple-fade-text'>	
+			Bhavam
                 </div>
             </div>
             <div onClick={()=>{

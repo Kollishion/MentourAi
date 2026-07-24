@@ -5,6 +5,7 @@ import axios from "axios";
 import { loginSchema, type LoginInput } from "../lib/validation/auth.schema";
 import { API } from "../lib/api";
 import FormError from "../components/forms/FormError";
+import { useAuthStore } from "../store/AuthContext";
 
 export default function Login() {
   const {
@@ -18,7 +19,7 @@ export default function Login() {
   async function onSubmit(data: LoginInput) {
    try{
  	const response = await axios.post(API.AUTH.LOGIN, data, {withCredentials: true});
-	console.log(response.data);
+	useAuthStore.getState().setUser(response.data.user);
    }catch(e){
  	console.error(e);
    }

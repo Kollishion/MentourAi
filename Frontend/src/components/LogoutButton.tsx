@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { API } from "../lib/api";
+import { useAuthStore } from "../store/AuthContext";
 
 export default function LogoutButton() {
 
@@ -15,9 +16,7 @@ export default function LogoutButton() {
                     withCredentials:true,
                 }
             );
-
-            console.log("Logged out");
-
+	    useAuthStore.getState().logout();
         }catch(e){
             console.error(e);
         }

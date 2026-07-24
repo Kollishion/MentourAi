@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+@theme {
+  /* ========= Brand ========= */
+  --color-primary: #7c3aed;      /* Purple */
+  --color-secondary: #a855f7;    /* Bright Purple */
+  --color-tertiary: #3b82f6;     /* AI Blue */
+
+  /* ========= Backgrounds ========= */
+  --color-background: #09090b;   /* Main background */
+  --color-surface: #18181b;      /* Cards/Navbar */
+  --color-surface-2: #27272a;    /* Hover states */
+  --color-surface-3: #3f3f46;    /* Elevated panels */
+
+  /* ========= Text ========= */
+  --color-text: #fafafa;
+  --color-text-muted: #a1a1aa;
+  --color-text-subtle: #71717a;
+
+  /* ========= Borders ========= */
+  --color-border: #3f3f46;
+  --color-border-light: #52525b;
+
+  /* ========= Status ========= */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* ========= Accent ========= */
+  --color-highlight: #c084fc;    /* Soft lavender */
+  --color-glow: #9333ea;         /* Rich purple */
+
+  /* ========= Fonts ========= */
+  --font-sans: "Inter", sans-serif;
+}

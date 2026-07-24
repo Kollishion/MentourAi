@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
+}
+
+model User {
+  id        String @id @default(cuid())
+
+  username  String @unique
+  email     String @unique
+  password  String
+
+  role      Role @default(USER)
+  status    AccountStatus @default(ACTIVE)
+
+  emailVerified Boolean @default(false)
+
+  lastLoginAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+
+  refreshTokens RefreshToken[]
+  passwordResets PasswordResetToken[]
+  emailTokens    EmailVerificationToken[]
+}
+
+
+model RefreshToken {
+  id String @id @default(cuid())
+  token String @unique @db.VarChar(512)
+  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  @@index([userId])
+}
+
+
+model PasswordResetToken {
+  id String @id @default(cuid())
+  token String @unique @db.VarChar(512)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  used Boolean @default(false)
+  createdAt DateTime @default(now())
+  @@index([userId])
+}
+
+
+model EmailVerificationToken {
+  id String @id @default(cuid())
+  token String @unique @db.VarChar(512)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  @@index([userId])
+}

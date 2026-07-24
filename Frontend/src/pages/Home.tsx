@@ -14,7 +14,6 @@ const Home = () => {
 
       <main className="relative min-h-screen overflow-hidden bg-background text-text">
 
-        {/* Background Glow */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute left-1/2 top-[45%] h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[180px]" />
           <div className="absolute left-1/2 top-[55%] h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-tertiary/10 blur-[150px]" />
@@ -22,7 +21,6 @@ const Home = () => {
 
         <section className="relative flex min-h-screen flex-col items-center pt-28">
 
-          {/* Heading */}
           <div className="z-20 text-center">
 
             <span className="uppercase tracking-[0.7em] text-sm text-text-muted">
@@ -55,7 +53,6 @@ const Home = () => {
 
           </div>
 
-          {/* Orb */}
           <div className="relative -mt-8 h-[340px] w-[340px] md:h-[500px] md:w-[500px] lg:h-[620px] lg:w-[620px]">
 
             <Canvas
@@ -101,7 +98,6 @@ const Home = () => {
 
           </div>
 
-          {/* Footer */}
           <div className="-mt-6 flex flex-col items-center">
 
             <div className="uppercase tracking-[0.45em] text-xs text-text-muted lg:text-sm">

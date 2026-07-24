@@ -1,77 +1,54 @@
-import { Role } from "@prisma/client";
-import { SignJWT, jwtVerify, type JWTPayload } from "jose";
+import { SignJWT, jwtVerify } from "jose";
 
-const accessSecretValue = process.env.ACCESS_TOKEN_EXPIRES_IN;
-const refreshSecretValue = process.env.REFRESH_TOKEN_EXPIRES_IN;
+const ACCESS_SECRET = new TextEncoder().encode(
+  process.env.JWT_ACCESS_SECRET!
+);
 
-if (!accessSecretValue || !refreshSecretValue) {
-  throw new Error("JWT secrets are not configured.");
-}
+const REFRESH_SECRET = new TextEncoder().encode(
+  process.env.JWT_REFRESH_SECRET!
+);
 
-const accessSecret = new TextEncoder().encode(accessSecretValue);
+const ACCESS_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN!;
+const REFRESH_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN!;
 
-const refreshSecret = new TextEncoder().encode(refreshSecretValue);
-
-const accessExpiresIn = process.env.ACCESS_TOKEN_EXPIRES_IN;
-const refreshExpiresIn = process.env.REFRESH_TOKEN_EXPIRES_IN;
-console.log("ACCESS_TOKEN_SECRET =", process.env.ACCESS_TOKEN_EXPIRES_IN);
-console.log("REFRESH_TOKEN_SECRET =", process.env.REFRESH_TOKEN_EXPIRES_IN);
-if (!accessExpiresIn || !refreshExpiresIn) {
-  throw new Error("JWT expiration settings are not configured.");
-}
-
-export interface JwtPayload extends JWTPayload{
+type TokenPayload = {
   id: string;
   email: string;
-  role: Role;
+  role: string;
+};
+
+export async function generateAccessToken(payload: TokenPayload) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(ACCESS_EXPIRES_IN)
+    .sign(ACCESS_SECRET);
 }
 
-const signToken = async (
-  payload: JwtPayload,
-  secret: Uint8Array,
-  expiresIn: string,
-): Promise<string> => {
+export async function generateRefreshToken(payload: TokenPayload) {
   return await new SignJWT(payload)
-    .setProtectedHeader({
-      alg: "HS256",
-    })
+    .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(expiresIn)
-    .sign(secret);
-};
+    .setExpirationTime(REFRESH_EXPIRES_IN)
+    .sign(REFRESH_SECRET);
+}
 
-export const generateAccessToken = async (
-  payload: JwtPayload,
-): Promise<string> => {
-  return signToken(
-    payload,
-    accessSecret,
-    accessExpiresIn
-  );
-};
+export async function verifyAccessToken(token: string) {
+  const { payload } = await jwtVerify(token, ACCESS_SECRET);
 
-export const generateRefreshToken = async (
-  payload: JwtPayload,
-): Promise<string> => {
-  return signToken(
-    payload,
-    refreshSecret,
-    refreshExpiresIn
-  );
-};
+  return {
+    id: payload.id as string,
+    email: payload.email as string,
+    role: payload.role as string,
+  };
+}
 
-export const verifyAccessToken = async (
-  token: string,
-): Promise<JwtPayload> => {
-  const { payload } = await jwtVerify<JwtPayload>(token, accessSecret);
+export async function verifyRefreshToken(token: string) {
+  const { payload } = await jwtVerify(token, REFRESH_SECRET);
 
-  return payload;
-};
-
-export const verifyRefreshToken = async (
-  token: string,
-): Promise<JwtPayload> => {
-  const { payload } = await jwtVerify<JwtPayload>(token, refreshSecret);
-
-  return payload;
-};
+  return {
+    id: payload.id as string,
+    email: payload.email as string,
+    role: payload.role as string,
+  };
+}

@@ -16,10 +16,11 @@ export const API = {
     UPDATE_STATUS: (id: string) =>
       `${import.meta.env.VITE_API_BASE_URL}/admin/users/${id}/status`,
   },
+
   AI: {
-    MENTOR: `${import.meta.env.VITE_API_BASE_URL}/ai/mentor`,
-    PROCESS_CONTENT: `${import.meta.env.VITE_API_BASE_URL}/ai/process-content`,
-    NEXT_ACTION: `${import.meta.env.VITE_API_BASE_URL}/ai/next-action`,
-    DIAGNOSE: `${import.meta.env.VITE_API_BASE_URL}/ai/diagnose`,
+    MENTOR: `${import.meta.env.VITE_AI_BASE_URL}/mentor`,
+    PROCESS_CONTENT: `${import.meta.env.VITE_AI_BASE_URL}/api/content/process`,
+    NEXT_ACTION: `${import.meta.env.VITE_AI_BASE_URL}/api/learning/next-action`,
+    DIAGNOSE: `${import.meta.env.VITE_AI_BASE_URL}/api/learning/diagnose`,
   },
 };

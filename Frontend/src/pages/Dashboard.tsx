@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import Profile from "./Profile";
+import { useAuthStore } from "../store/AuthContext.tsx";
 import type { DiagnoseResponse } from "../lib/ai";
+import axios from "axios";
+import { API } from "../lib/api";
 interface Message {
     id: string;
     role: "user" | "assistant";
@@ -34,19 +37,50 @@ const Dashboard = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  function handleSend() {
-    if (!input.trim()) return;
-    const userMsg: Message = { id: crypto.randomUUID(), role: "user", content: input };
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
+  async function handleSend() {
+  if (!input.trim()) return;
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), role: "assistant", content: "This is a placeholder response." },
-      ]);
-    }, 500);
+  const text = input;
+
+  const userMsg = {
+    id: crypto.randomUUID(),
+    role: "user" as const,
+    content: text,
+  };
+
+  setMessages((prev) => [...prev, userMsg]);
+  setInput("");
+
+  try {
+    const res = await axios.post(
+      API.AI.MENTOR,
+      {
+        student_id: useAuthStore.getState().user?.id,
+        prompt: text,
+      }
+    );
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: res.data.response,
+      },
+    ]);
+  } catch (err) {
+    console.error(err);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: "Something went wrong.",
+      },
+    ]);
   }
+}
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {

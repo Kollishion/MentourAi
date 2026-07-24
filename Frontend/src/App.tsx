@@ -13,42 +13,29 @@ const App = () => {
 const setUser = useAuthStore((state) => state.setUser);
 
     const setLoading = useAuthStore((state) => state.setLoading);
-
     useEffect(() => {
+    async function fetchProfile() {
+        try {
+            const accessToken = localStorage.getItem("accessToken");
 
-        async function fetchProfile() {
+            const response = await axios.get(API.AUTH.PROFILE, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                withCredentials: true,
+            });
 
-            try {
-
-                const response = await axios.get(
-                    API.AUTH.PROFILE,
-                    {
-                        withCredentials: true,
-                    }
-                );
-
-                setUser(response.data.user);
-
-            }
-
-            catch {
-
-                setUser(null);
-
-            }
-
-            finally {
-
-                setLoading(false);
-
-            }
-
+            setUser(response.data.data);
+        } catch {
+            setUser(null);
+        } finally {
+            setLoading(false);
         }
+    }
 
-        fetchProfile();
+    fetchProfile();
+}, []);
 
-    }, []);
-	
   return (
     <>
 	<AppRoutes />

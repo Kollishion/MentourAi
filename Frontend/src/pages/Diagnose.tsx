@@ -131,7 +131,7 @@ export default function Diagnose() {
                   {result.diagnosis.misconceptions.map((point, i) => (
                     <li key={i} className="flex gap-2 text-sm text-text">
                       <span className="text-error shrink-0">✕</span>
-                      {point}
+                      {point.description}
                     </li>
                   ))}
                 </ul>

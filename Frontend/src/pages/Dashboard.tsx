@@ -32,6 +32,13 @@ const CONCEPT_MAP: Record<string, string> = {
   "Teach linked lists.": "linked lists",
 };
 
+const PROMPT_SUGGESTIONS = [
+  { label: "Explain Recursion", prompt: "Explain recursion like I'm a beginner." },
+  { label: "Dynamic Programming", prompt: "Teach me dynamic programming." },
+  { label: "Binary Trees", prompt: "Explain binary trees." },
+  { label: "Linked Lists", prompt: "Teach linked lists." },
+];
+
 function extractConcept(prompt: string): string {
   return CONCEPT_MAP[prompt] ?? prompt;
 }
@@ -202,7 +209,7 @@ const Dashboard = () => {
                 <p className="text-text-muted">Ask a question or test your understanding.</p>
 
                 <div className="grid grid-cols-2 gap-3 mt-10">
-                  {CONCEPT_MAP.map((s) => (
+                  {PROMPT_SUGGESTIONS.map((s) => (
                     <button
                       key={s.label}
                       onClick={() => sendPrompt(s.prompt)}

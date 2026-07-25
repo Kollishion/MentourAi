@@ -2,9 +2,14 @@ import { useContext, useRef } from 'react';
 import { NavbarColorContext, NavbarContext } from '../store/NavContext.tsx';
 const Navbar = () => {
 
-    const navGreenRef = useRef<HTMLDivElement | null>(null)
-    const [navOpen,setNavOpen] = useContext(NavbarContext);
-    const [navColor, setNavColor] = useContext(NavbarColorContext);
+    const navGreenRef = useRef<HTMLDivElement | null>(null);
+
+    const navbarCtx = useContext(NavbarContext);
+    if (!navbarCtx) throw new Error("NavbarContext must be used within NavbarProvider");
+    const [, setNavOpen] = navbarCtx;
+
+    const navColorCtx = useContext(NavbarColorContext);
+    if (!navColorCtx) throw new Error("NavbarColorContext must be used within NavbarProvider");
 
     return (
         <div className='z-4 flex fixed top-0 w-full items-start justify-between'>

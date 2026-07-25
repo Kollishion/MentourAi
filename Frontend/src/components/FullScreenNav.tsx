@@ -46,7 +46,7 @@ const FullScreenNav = () => {
   }
   return nav;
 }, [user]);
-   async function handleLogout(e) {
+   async function handleLogout(e: React.MouseEvent<HTMLAnchorElement>) {
 	   e.preventDefault();
   try {
     await axios.post(

@@ -100,7 +100,7 @@ const Home = () => {
           <div className="-mt-6 flex flex-col items-center">
 
             <div className="uppercase tracking-[0.45em] text-xs text-text-muted lg:text-sm">
-              AI • WEB • MOBILE • CLOUD
+              TEACH | LEARN | REPEAT
             </div>
 
             <div className="mt-10 flex flex-col items-center">

@@ -8,6 +8,7 @@ import ForgotPassword from "../pages/ForgotPassword"
 import ResetPassword from "../pages/ResetPassword"
 import Profile from "../pages/Profile"
 import AdminDashboard from "../pages/AdminDashboard"
+import Learn from "../lib/Learn";
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,7 @@ const AppRoutes = () => {
 	  <Route path="/reset-password" element={<ResetPassword />} />
 	  <Route path="/get-profile" element={<Profile />} />
 	  <Route path="/admin-dashboard" element={<AdminDashboard />} />
+	  <Route path="/learn" element={<Learn />} />
 	</Routes>
     </div>
   )

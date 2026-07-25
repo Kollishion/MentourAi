@@ -1,11 +1,11 @@
-# 🧠 MentourAi (Mentor OS) - Agentic AI Mentor Ecosystem
+# MentourAi (Mentor OS) - Agentic AI Mentor Ecosystem
 
 > **Repository:** [https://github.com/Kollishion/MentourAi.git](https://github.com/Kollishion/MentourAi.git)  
 > **Tagline:** A Prerequisite-Gated, Misconception-Aware Agentic AI Mentor System.
 
 ---
 
-## 📌 Overview
+## Overview
 
 **MentourAi (Mentor OS)** is an autonomous multi-agent learning platform designed to replace passive education and naive AI chatbots with structured, prerequisite-aware cognitive mentoring.
 
@@ -13,18 +13,18 @@ Unlike conventional LLM tutors that provide direct answers—reinforcing superfi
 
 ---
 
-## 💡 Key Features & Differentiators
+## Key Features & Differentiators
 
-- 🤖 **Autonomous Multi-Agent System:** 4 specialized agents working seamlessly in an end-to-end feedback loop.
-- 🗺️ **Knowledge Graph Extraction:** Converts syllabus PDFs, lecture notes, transcripts, and past exam papers into structured concept nodes with prerequisite chains.
-- 🚧 **Prerequisite Gatekeeping ($\ge 60\%$ Mastery):** Prevents students from attempting complex topics (e.g., *Dynamic Programming*) if underlying prerequisites (e.g., *Recursion*) are lacking.
-- 🔬 **Deep Misconception Diagnosis:** Identifies underlying mental mistakes rather than simple right/wrong binary feedback.
-- ⚖️ **Confidence Calibration:** Detects dangerous overconfidence (high confidence + wrong answer) and underconfidence.
-- 🎨 **Adaptive Socratic Tutoring:** Dynamically selects teaching strategies (**Analogy**, **Guided Practice**, **Application**, **Challenge Problem**) based on real-time mastery scores.
+- **Autonomous Multi-Agent System:** 4 specialized agents working seamlessly in an end-to-end feedback loop.
+- **Knowledge Graph Extraction:** Converts syllabus PDFs, lecture notes, transcripts, and past exam papers into structured concept nodes with prerequisite chains.
+- **Prerequisite Gatekeeping ($\ge 60\%$ Mastery):** Prevents students from attempting complex topics (e.g., *Dynamic Programming*) if underlying prerequisites (e.g., *Recursion*) are lacking.
+- **Deep Misconception Diagnosis:** Identifies underlying mental mistakes rather than simple right/wrong binary feedback.
+- **Confidence Calibration:** Detects dangerous overconfidence (high confidence + wrong answer) and underconfidence.
+- **Adaptive Socratic Tutoring:** Dynamically selects teaching strategies (**Analogy**, **Guided Practice**, **Application**, **Challenge Problem**) based on real-time mastery scores.
 
 ---
 
-## 🏗️ System Architecture & Multi-Agent Pipeline
+## System Architecture & Multi-Agent Pipeline
 
 ```mermaid
 flowchart TD
@@ -56,18 +56,18 @@ flowchart TD
 
 ---
 
-## 🤖 The 4 Autonomous Agents Explained
+## The 4 Autonomous Agents Explained
 
 | Agent | Module | Description & Responsibilities |
 |---|---|---|
-| 📄 **Content Processing Agent** | `content_agent.py` | Chunks raw documents, extracts concept nodes via Pydantic schemas, performs fuzzy string merging (`NAME_MATCH_THRESHOLD = 0.85`), and sums exam frequencies. |
-| 🎯 **Orchestrator Agent** | `orchestrator.py` | Manages prerequisite gates (`MASTERY_GATE = 0.6`) and determines the **Next Best Action** (`remediate_prerequisite`, `run_diagnostic`, or `transfer_problem`). |
-| 🔍 **Diagnostic Agent** | `diagnostic_agent.py` | Analyzes student answers, confidence levels, and reasoning to identify root misconceptions and grade their severity (`high`, `medium`, `low`). |
-| 🎓 **Scaffolded Tutor Agent** | `tutor_agents.py` | Picks the optimal Socratic teaching intervention strategy (**Analogy**, **Guided Practice**, **Application**, **Challenge**) targeting the worst misconception. |
+| **Content Processing Agent** | `content_agent.py` | Chunks raw documents, extracts concept nodes via Pydantic schemas, performs fuzzy string merging (`NAME_MATCH_THRESHOLD = 0.85`), and sums exam frequencies. |
+| **Orchestrator Agent** | `orchestrator.py` | Manages prerequisite gates (`MASTERY_GATE = 0.6`) and determines the **Next Best Action** (`remediate_prerequisite`, `run_diagnostic`, or `transfer_problem`). |
+| **Diagnostic Agent** | `diagnostic_agent.py` | Analyzes student answers, confidence levels, and reasoning to identify root misconceptions and grade their severity (`high`, `medium`, `low`). |
+| **Scaffolded Tutor Agent** | `tutor_agents.py` | Picks the optimal Socratic teaching intervention strategy (**Analogy**, **Guided Practice**, **Application**, **Challenge**) targeting the worst misconception. |
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### **Frontend**
 - **Framework:** React 19 + TypeScript + Vite 8
@@ -89,7 +89,7 @@ flowchart TD
 
 ---
 
-## 📁 Repository Directory Structure
+## Repository Directory Structure
 
 ```text
 Agentic Mentor/
@@ -120,7 +120,7 @@ Agentic Mentor/
 
 ---
 
-## 🚀 Setup & Execution Guide
+## Setup & Execution Guide
 
 ### Prerequisites
 
@@ -222,9 +222,9 @@ npm run dev
 
 ---
 
-## 📡 API Endpoints Reference
+## API Endpoints Reference
 
-### 🤖 AI Mentor FastAPI Engine (`http://localhost:8000`)
+### AI Mentor FastAPI Engine (`http://localhost:8000`)
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -237,7 +237,7 @@ npm run dev
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 To test the Python agents pipeline locally:
 
@@ -256,7 +256,7 @@ python test_live_agents.py
 
 ---
 
-## 📜 License & Contributing
+## License & Contributing
 
 Distributed under the **MIT License**. Contributions, pull requests, and feature suggestions are welcome!
 

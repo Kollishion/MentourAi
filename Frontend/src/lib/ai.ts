@@ -62,6 +62,20 @@ export interface NextActionResponse {
   decision: NextActionDecision;
 }
 
+export interface MaterialRequest {
+  student_id: string;
+  text: string;
+  material_type?: "Syllabus" | "Notes" | "Exam Paper" | "Lecture" | "other" | string;
+  source_name?: string;
+}
+
+export interface ProcessContentResponse {
+  message: string;
+  student_id: string;
+  concept_count: number;
+  content_map: any;
+}
+
 export async function getNextAction(student_id: string, target_concept: string): Promise<NextActionResponse> {
   const res = await axios.post(API.AI.NEXT_ACTION, { student_id, target_concept }, { withCredentials: true });
   return res.data;
@@ -77,3 +91,9 @@ export async function diagnoseStudent(payload: {
   const res = await axios.post(API.AI.DIAGNOSE, payload, { withCredentials: true });
   return res.data;
 }
+
+export async function processContent(payload: MaterialRequest): Promise<ProcessContentResponse> {
+  const res = await axios.post(API.AI.PROCESS_CONTENT, payload, { withCredentials: true });
+  return res.data;
+}
+

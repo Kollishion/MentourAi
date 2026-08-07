@@ -3,11 +3,10 @@ import re
 from typing import Optional
 from ollama import Client
 
-MODEL_NAME = os.getenv("LLM_MODEL", "gemma4:31b")
+MODEL_NAME = os.getenv("CLOUD_MODEL", os.getenv("OLLAMA_MODEL", "gemma4:31b-cloud"))
 
 client = Client(
-    host="https://ollama.com",
-    headers={"Authorization": "Bearer " + os.environ.get("OLLAMA_API_KEY", "")},
+    #host=os.getenv("OLLAMA_HOST", "http://localhost:11434"),
 )
 
 

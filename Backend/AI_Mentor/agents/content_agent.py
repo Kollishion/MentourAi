@@ -13,10 +13,11 @@ NAME_MATCH_THRESHOLD = 0.85
 
 
 def _extract_from_text(text: str, material_type: str, source_name: str) -> ContentMap:
-    prompt = CONTENT_PROMPT.format(
-        material_type=material_type,
-        source_name=source_name,
-        material_excerpt=text,
+    prompt = (
+        CONTENT_PROMPT
+        .replace("{material_type}", str(material_type))
+        .replace("{source_name}", str(source_name))
+        .replace("{material_excerpt}", str(text))
     )
     content = call_gemma(prompt, schema=ContentMap.model_json_schema())
 

@@ -1,11 +1,16 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { registerSchema, type RegisterInput } from "../lib/validation/auth.schema";
 import { API } from "../lib/api";
 import FormError from "../components/forms/FormError";
 
 export default function Register() {
+  const navigate = useNavigate();
+  const [serverError, setServerError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -14,22 +19,36 @@ export default function Register() {
     resolver: zodResolver(registerSchema),
   });
 
-  async function onSubmit(data: RegisterInput) {
+  const onSubmit = async (data: RegisterInput) => {
     try {
+      setServerError(null);
       const response = await axios.post(API.AUTH.REGISTER, data);
-      console.log(response.data);
-    } catch (e) {
-      console.error(e);
+      console.log('Success:', response.data);
+      navigate(`/verify-email?email=${encodeURIComponent(data.email)}`);
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response?.status === 500) {
+        console.error('Server Error: Something went wrong on the backend.');
+        setServerError('Server Error: Something went wrong on the backend.');
+      } else {
+        console.error('An unexpected error occurred:', error);
+        setServerError(error.response?.data?.message || 'An unexpected error occurred.');
+      }
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md bg-surface border border-border rounded-2xl p-8 shadow-xl">
         <h1 className="text-3xl font-bold purple-fade-text mb-1">Create account</h1>
-        <p className="text-text-muted text-sm mb-8">
+        <p className="text-text-muted text-sm mb-6">
           Start your learning journey with Bhavam
         </p>
+
+        {serverError && (
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            {serverError}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
@@ -41,9 +60,10 @@ export default function Register() {
             </label>
             <input
               id="username"
+              type="text"
+              autoComplete="username"       // NEW
               placeholder="johndoe"
               {...register("username")}
-	      required
               className="w-full bg-surface-2 border placeholder:text-text-subtle rounded-lg px-4 py-2.5 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
             />
             <FormError error={errors.username} />
@@ -58,9 +78,10 @@ export default function Register() {
             </label>
             <input
               id="email"
+              type="email"                  // NEW
+              autoComplete="email"           // NEW
               placeholder="you@example.com"
               {...register("email")}
-	      required
               className="w-full bg-surface-2 border placeholder:text-text-subtle rounded-lg px-4 py-2.5 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
             />
             <FormError error={errors.email} />
@@ -76,9 +97,9 @@ export default function Register() {
             <input
               id="password"
               type="password"
+              autoComplete="new-password"   // NEW
               placeholder="••••••••"
               {...register("password")}
-	      required
               className="w-full bg-surface-2 border placeholder:text-text-subtle rounded-lg px-4 py-2.5 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
             />
             <FormError error={errors.password} />

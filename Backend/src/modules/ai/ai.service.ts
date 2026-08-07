@@ -10,6 +10,10 @@ export async function askMentor(prompt: string, payload?: Record<string, any>) {
     });
     return response.data;
   } catch (error: any) {
+    if (error?.code === "ECONNREFUSED") {
+      console.error(`❌ Python AI Service is offline at ${AI_SERVICE_URL}. Please start it using: uvicorn app:app --port 8000`);
+      throw new Error(`AI Service is offline. Please start the FastAPI service on port 8000.`);
+    }
     console.error("Error communicating with Python AI Service:", error?.message || error);
     throw new Error(error?.response?.data?.detail || error?.message || "AI Service unavailable");
   }

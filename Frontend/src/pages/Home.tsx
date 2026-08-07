@@ -4,6 +4,7 @@ import FullScreenNav from "../components/FullScreenNav";
 import { Canvas } from "@react-three/fiber";
 import { Center, OrbitControls } from "@react-three/drei";
 
+
 import OrbModel from "../models/OrbModel";
 
 const Home = () => {

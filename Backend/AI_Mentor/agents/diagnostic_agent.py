@@ -15,11 +15,12 @@ def diagnostic_agent(
     reasoning, figure out WHAT they actually understand vs. the
     specific misconception behind their mistake - not just right/wrong.
     """
-    prompt = DIAGNOSTIC_PROMPT.format(
-        concept=concept,
-        question=question,
-        student_answer=student_answer,
-        confidence=confidence,
+    prompt = (
+        DIAGNOSTIC_PROMPT
+        .replace("{concept}", str(concept))
+        .replace("{question}", str(question))
+        .replace("{student_answer}", str(student_answer))
+        .replace("{confidence}", str(confidence))
     )
 
     content = call_gemma(prompt, schema=DiagnosticResult.model_json_schema())

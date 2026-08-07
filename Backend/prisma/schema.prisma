@@ -3,10 +3,11 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
+// SQLite does not support enums natively; Prisma maps them to String
 enum Role {
   USER
   ADMIN
@@ -36,42 +37,41 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-
-  refreshTokens RefreshToken[]
+  refreshTokens  RefreshToken[]
   passwordResets PasswordResetToken[]
   emailTokens    EmailVerificationToken[]
 }
 
-
 model RefreshToken {
-  id String @id @default(cuid())
-  token String @unique @db.VarChar(512)
-  userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   createdAt DateTime @default(now())
+
   @@index([userId])
 }
-
 
 model PasswordResetToken {
-  id String @id @default(cuid())
-  token String @unique @db.VarChar(512)
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
-  used Boolean @default(false)
+  used      Boolean  @default(false)
   createdAt DateTime @default(now())
+
   @@index([userId])
 }
 
-
 model EmailVerificationToken {
-  id String @id @default(cuid())
-  token String @unique @db.VarChar(512)
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   createdAt DateTime @default(now())
+
   @@index([userId])
 }

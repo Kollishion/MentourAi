@@ -4,6 +4,7 @@ import { sendEmail } from "../../config/mailer.ts";
 import { generateOtp, generateToken, hashToken } from "../../utils/token.ts";
 import type { RegisterInput, LoginInput } from "../auth/auth.validation.ts";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.ts";
+import { AppError } from "../../middlewares/error.middleware.ts";
 
 const OTP_EXPIRY_MINUTES = 10;
 const RESET_EXPIRY_MINUTES = 15;
@@ -130,20 +131,20 @@ export const loginUser = async (data: LoginInput) => {
     where: { email: data.email },
   });
   if (!user) {
-    throw new Error("Invalid credentials.");
+    throw new AppError("Invalid credentials.", 401);
   }
 
   const validPassword = await bcrypt.compare(data.password, user.password);
   if (!validPassword) {
-    throw new Error("Invalid credentials.");
+    throw new AppError("Invalid credentials.", 401);
   }
 
   if (user.status !== "ACTIVE") {
-    throw new Error("This account is not active. Contact support.");
+    throw new AppError("This account is not active. Contact support.", 403);
   }
 
   if (!user.emailVerified) {
-  throw new Error("Please verify your email before logging in.");
+    throw new AppError("Please verify your email before logging in.", 400);
   }
 
   const updatedUser = await prisma.user.update({

@@ -3,13 +3,42 @@ import { z } from "zod";
 export const registerSchema = z.object({
   username: z
     .string()
-    .min(3, "Username must be at least 3 characters"),
+    .trim()
+    .min(2, "Username must be at least 2 characters")
+    .max(50, "Username cannot exceed 50 characters"),
 
-  email: z.email("Invalid email"),
+  email: z.string().trim().toLowerCase().email("Invalid email address"),
 
   password: z
     .string()
-    .min(8, "Password should be at least 8 characters"),
+    .min(8, "Password must be at least 8 characters")
+    .max(100, "Password cannot exceed 100 characters")
+    .superRefine((val, ctx) => {
+      if (!/[A-Z]/.test(val)) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Password must contain an uppercase letter",
+        });
+      }
+      if (!/[a-z]/.test(val)) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Password must contain a lowercase letter",
+        });
+      }
+      if (!/[0-9]/.test(val)) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Password must contain a number",
+        });
+      }
+      if (!/[^A-Za-z0-9]/.test(val)) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Password must contain a special character",
+        });
+      }
+    }),
 });
 
 export const loginSchema = z.object({

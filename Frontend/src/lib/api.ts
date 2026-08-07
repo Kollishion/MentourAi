@@ -2,6 +2,7 @@ export const API = {
   AUTH: {
     REGISTER: `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
     VERIFY_EMAIL: `${import.meta.env.VITE_API_BASE_URL}/auth/verify-email`,
+    RESEND_VERIFICATION: `${import.meta.env.VITE_API_BASE_URL}/auth/resend-verification`,
     LOGIN: `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
     PROFILE: `${import.meta.env.VITE_API_BASE_URL}/auth/profile`,
     LOGOUT: `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,

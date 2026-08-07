@@ -41,7 +41,7 @@ def get_student_state(student_id: str) -> StudentState:
 class MaterialRequest(BaseModel):
     student_id: str
     text: str
-    material_type: MaterialType = "other"
+    material_type: str = "other"
     source_name: str = "Uploaded_Material"
 
 
@@ -74,6 +74,14 @@ def root():
         "status": "online",
         "system": "Mentor OS Agentic Learning API",
         "version": "1.0.0",
+    }
+
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "ok",
+        "service": "AI_Mentor FastAPI",
     }
 
 
@@ -139,29 +147,57 @@ User:
     }
 
 
+def normalize_material_type(raw_type: str) -> str:
+    raw = (raw_type or "").strip().lower()
+    if "note" in raw or "lecture" in raw:
+        return "lecture_notes"
+    elif "syllab" in raw:
+        return "syllabus"
+    elif "exam" in raw or "paper" in raw:
+        return "past_exam_paper"
+    elif "textbook" in raw or "chapter" in raw:
+        return "textbook_chapter"
+    elif "transcript" in raw or "video" in raw:
+        return "video_transcript"
+    return "other"
+
+
 @app.post("/api/content/process")
 def process_content(request: MaterialRequest):
-    state = get_student_state(request.student_id)
+    try:
+        state = get_student_state(request.student_id)
+        norm_type = normalize_material_type(request.material_type)
 
-    material = MaterialInput(
-        text=request.text,
-        material_type=request.material_type,
-        source_name=request.source_name,
-    )
+        material = MaterialInput(
+            text=request.text,
+            material_type=norm_type, # type: ignore
+            source_name=request.source_name or "Uploaded_Material",
+        )
 
-    print(
-        f"[Content Agent] Extracting concept map for student '{request.student_id}'..."
-    )
+        print(
+            f"[Content Agent] Extracting concept map for student '{request.student_id}' (type={norm_type})..."
+        )
 
-    content_map = content_agent([material])
-    load_content_map(state, content_map)
+        content_map = content_agent([material])
+        load_content_map(state, content_map)
 
-    return {
-        "message": "Content processed successfully",
-        "student_id": request.student_id,
-        "concept_count": len(content_map.concepts),
-        "content_map": content_map.model_dump(),
-    }
+        return {
+            "message": "Content processed successfully",
+            "student_id": request.student_id,
+            "concept_count": len(content_map.concepts),
+            "content_map": content_map.model_dump(),
+        }
+    except Exception as e:
+        print(f"❌ Error in process_content: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "message": "Content processed with default fallback",
+            "student_id": request.student_id,
+            "concept_count": 0,
+            "content_map": {"subject": "Course Material", "concepts": []},
+            "error": str(e),
+        }
 
 
 @app.post("/api/learning/next-action")

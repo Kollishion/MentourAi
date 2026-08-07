@@ -44,7 +44,7 @@ function extractConcept(prompt: string): string {
 }
 
 const Dashboard = () => {
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const [conversations] = useState<Conversation[]>([{ id: "1", title: "New chat" }]);
   const [activeId, setActiveId] = useState("1");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -129,15 +129,20 @@ const Dashboard = () => {
           },
         ]);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Server Error Detail:", err?.response?.data || err);
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.response?.data?.detail ||
+        err?.message ||
+        "Something went wrong. Please check your AI connection.";
       setMessages((prev) => [
         ...prev,
         {
           id: crypto.randomUUID(),
           role: "assistant",
           type: "text",
-          content: "Something went wrong.",
+          content: errorMessage,
         },
       ]);
     } finally {
@@ -160,9 +165,22 @@ const Dashboard = () => {
     <div className="h-screen flex bg-background text-text">
       {/* Sidebar */}
       <aside className="w-64 shrink-0 bg-surface border-r border-border flex flex-col">
-        <div className="p-3">
-          <button className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary transition-colors text-white rounded-lg py-2.5 text-sm font-medium">
+        <div className="p-3 space-y-2">
+          <button
+            onClick={() => {
+              setMessages([]);
+              setActiveId("1");
+            }}
+            className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-secondary transition-colors text-white rounded-lg py-2.5 text-sm font-medium"
+          >
             + New chat
+          </button>
+
+          <button
+            onClick={() => navigate("/diagnose")}
+            className="w-full flex items-center justify-center gap-2 bg-surface-2 hover:bg-surface border border-border text-purple-300 rounded-lg py-2 text-xs font-semibold transition"
+          >
+            ⚡ Diagnostic Agent
           </button>
         </div>
 
@@ -232,11 +250,10 @@ const Dashboard = () => {
                   className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl px-5 py-4 text-sm leading-7 shadow-lg ${
-                      m.role === "user"
-                        ? "bg-primary text-white"
-                        : "bg-surface border border-border text-text"
-                    }`}
+                    className={`max-w-[80%] rounded-2xl px-5 py-4 text-sm leading-7 shadow-lg ${m.role === "user"
+                      ? "bg-primary text-white"
+                      : "bg-surface border border-border text-text"
+                      }`}
                   >
                     {m.role === "assistant" && m.badge && (
                       <div className="flex items-center justify-between mb-3">
@@ -262,7 +279,7 @@ const Dashboard = () => {
                         <button onClick={() => navigate(`/learn?concept=${encodeURIComponent(m.concept ?? "")}`)}
                           className="bg-primary hover:bg-secondary transition-colors text-white rounded-lg px-4 py-2 text-sm font-medium"
                         >
-                          Start Diagnostic
+                          Start Diagnostic Agent
                         </button>
                       </div>
                     ) : (
@@ -297,7 +314,7 @@ const Dashboard = () => {
                 e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
               }}
               onKeyDown={handleKeyDown}
-              placeholder={loading ? "MentourAI is thinking..." : "Ask anything"}
+              placeholder={loading ? "MentourAI is thinking..." : "What concept/topic do you want to work on?"}
               rows={1}
               disabled={loading}
               className="flex-1 bg-transparent resize-none outline-none placeholder:text-text-subtle text-sm max-h-40"

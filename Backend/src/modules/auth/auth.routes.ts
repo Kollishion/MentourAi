@@ -1,10 +1,13 @@
 import Router from "express";
 import * as authController from "./auth.controller.ts";
 import { authenticate } from "../../middlewares/authenticate.middleware.ts";
+import { validate } from "../../middlewares/validate.middleware.ts";
+import { registerSchema, loginSchema } from "./auth.validation.ts";
+
 const authRouter = Router();
 
-authRouter.post("/register", authController.register);
-authRouter.post("/login", authController.login);
+authRouter.post("/register", validate(registerSchema), authController.register);
+authRouter.post("/login", validate(loginSchema), authController.login);
 authRouter.post("/verify-email", authController.verifyEmailHandler);
 authRouter.post("/resend-verification", authController.resendVerification);
 authRouter.post("/refresh", authController.refresh);
